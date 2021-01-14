@@ -1,0 +1,5 @@
+add; rax; rbx  #komentar
+add; [rax]; rbx  #komentar
+add; [250]; rbx  #komentar
+add; rax; [rbx]  #komentar
+add; rax; 200  #komentar

@@ -21,6 +21,9 @@ public:
 	Register(const Register& other);
 	Register(Register&& other);
 
+	Register& operator=(const Register& other);
+	Register& operator=(Register&& other);
+
 	std::string asHex();
 
 	// Inherited via IReadWritable
@@ -34,5 +37,8 @@ public:
 	virtual void setAsQuarter(uint16_t value) override;
 	virtual void setAsByte(uint8_t value) override;
 
+private:
+	void moveOther(Register&& other);
+	void copyOther(const Register& other);
 };
 
