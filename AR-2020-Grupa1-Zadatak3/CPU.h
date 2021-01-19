@@ -16,6 +16,8 @@ class CPU
 	std::vector<uint8_t> heap;
 	std::stack<uint64_t> stack;
 
+	Flags flags;
+
 	int currentInstruction = 0;
 	std::vector<Instruction> instructions;
 	std::vector<std::string> lines;
@@ -36,9 +38,14 @@ public:
 	inline int getRegisterCount() const { return numberOfRegisters; };
 	inline int getRegisterCount()		{ return numberOfRegisters; };
 
+	inline Flags& getFlags() { return flags; }
+	inline const Flags& getFlags() const { return flags; }//zlu ne trebalo
+
 	Register& getRegister(const std::string& name);
 
 	void printInstructions();
+
+	void run();
 
 public:
 	

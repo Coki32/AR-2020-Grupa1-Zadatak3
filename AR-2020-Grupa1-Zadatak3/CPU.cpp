@@ -57,6 +57,12 @@ Register& CPU::getRegister(const std::string& name)
 
 void CPU::printInstructions()
 {
-	for (auto it = instructions.begin(); it != instructions.end(); ++it)
-		std::cout << *it << std::endl;
+	for (int i = 0; i < lines.size(); ++i)
+		std::cout << "\"" << lines[i] << "\" => " << instructions[i] << std::endl;
+}
+
+void CPU::run()
+{
+	for (currentInstruction = 0; currentInstruction < instructions.size(); ++currentInstruction)
+		instructions[currentInstruction].execute();
 }

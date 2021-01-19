@@ -1,5 +1,4 @@
-add; rax; rbx  #komentar
-add; [rax]; rbx  #komentar
-add; [250]; rbx  #komentar
-add; rax; [rbx]  #komentar
-add; rax; 200  #komentar
+mov; rax; 0; 
+add; rax; 150;
+mov; rbx; 15;
+add; rbx; rax;

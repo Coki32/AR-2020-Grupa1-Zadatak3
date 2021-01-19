@@ -55,7 +55,7 @@ std::string removeAfterCopy(const std::string& s, char special)
 bool isRegister(const std::string& str, int numberOfRegisters)
 {
 	int len = str.length();
-	if (len < 2 || len>3)
+	if (len < 2 || len > 3)
 		return false;
 	if (len == 2) {
 		if ((str[1] == 'x' || str[1] == 'l') && (str[0] - 'a') < numberOfRegisters)
@@ -63,10 +63,9 @@ bool isRegister(const std::string& str, int numberOfRegisters)
 		else
 			return false;
 	}//else znaci len==3
-	if ((str[0] != 'r' && str[0] != 'e') || str[2]!='x')//mora biti [r|e][a..(a+numberOfRegisters)]x
+	if ((str[0] != 'r' && str[0] != 'e') || str[2] != 'x')//mora biti [r|e][a..(a+numberOfRegisters)]x
 		return false;
 	if ((str[1] - 'a') >= numberOfRegisters)
 		return false;
 	return true;
 }
-

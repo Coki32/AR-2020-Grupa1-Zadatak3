@@ -4,10 +4,12 @@
 
 #include "IReadWritable.h"
 
+enum class RegisterSize { Full, Half, Quarter, Byte };
+
 class Register : public virtual IReadWritable
 {
 protected:
-	union 
+	union
 	{
 		uint64_t full;
 		uint32_t half;
@@ -15,9 +17,9 @@ protected:
 		uint8_t  byte;
 	};
 	std::string name;
-
+	RegisterSize size;
 public:
-	Register(const std::string& name) noexcept :full(0), name(name) {}
+	Register(const std::string& name) noexcept;
 	Register(const Register& other);
 	Register(Register&& other);
 
@@ -25,6 +27,13 @@ public:
 	Register& operator=(Register&& other);
 
 	std::string asHex();
+
+	RegisterSize getSize() const { return size; }
+	RegisterSize getSize() { return size; }
+
+
+	uint64_t getBySize() const;
+	void setBySize(uint64_t value);
 
 	// Inherited via IReadWritable
 	virtual uint64_t getAsFull() const override;
