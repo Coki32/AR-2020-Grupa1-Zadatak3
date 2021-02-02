@@ -11,7 +11,6 @@ std::vector<std::string> splitString(const std::string& input, char delim)
 	return strings;
 }
 
-
 static bool notASpace(char c)
 {
 	return !std::isspace(c);
@@ -42,7 +41,9 @@ std::string trimCopy(const std::string& s)
 
 std::string& removeAfter(std::string& s, char special)
 {
-	s.erase(std::find(s.begin(), s.end(), special), s.end());
+	auto specialIt = std::find(s.begin(), s.end(), special);
+	if(specialIt != s.end())
+		s.erase(specialIt, s.end());
 	return s;
 }
 
@@ -50,6 +51,12 @@ std::string removeAfterCopy(const std::string& s, char special)
 {
 	std::string copy = std::string(s);
 	return removeAfter(copy, special);
+}
+
+std::string toHexString(uint64_t value) {
+	std::stringstream ss;
+	ss << std::hex << "0x" << value;
+	return ss.str();
 }
 
 bool isRegister(const std::string& str, int numberOfRegisters)
@@ -68,4 +75,13 @@ bool isRegister(const std::string& str, int numberOfRegisters)
 	if ((str[1] - 'a') >= numberOfRegisters)
 		return false;
 	return true;
+}
+
+std::shared_ptr<std::vector<std::string>> charPtrArrayToVector(char** inputArray, int length)
+{
+	auto result = std::make_shared<std::vector<std::string>>();
+	result->reserve(length);
+	for (int i = 0; i < length; ++i)
+		result->emplace_back(inputArray[i]);
+	return result;
 }

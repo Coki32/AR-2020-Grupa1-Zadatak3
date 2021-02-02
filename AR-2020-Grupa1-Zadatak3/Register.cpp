@@ -1,4 +1,8 @@
+#include <iomanip>
+#include <string>
+#include <sstream>
 #include "Register.h"
+#include "util.h"
 
 Register::Register(const std::string& name) noexcept :full(0), name(name)
 {
@@ -32,9 +36,9 @@ Register& Register::operator=(Register&& other)
     return *this;
 }
 
-std::string Register::asHex()
+std::string Register::asHex(bool noname)
 {
-    return std::string("[").append(name).append("]: ").append(std::to_string(full));
+    return noname ? toHexString(full) : std::string("[").append(name).append("]: ").append(toHexString(full));
 }
 
 #pragma region Smece get/set as nesto
@@ -65,11 +69,9 @@ void Register::setBySize(uint64_t value)
     {
     case RegisterSize::Full:
         full = value;
-        //return false;
         break;
     case RegisterSize::Half:
         half = (uint32_t)value;
-        //return value>UINT32_MAX
         break;
     case RegisterSize::Quarter:
         quarter = (uint16_t)value;
@@ -77,49 +79,10 @@ void Register::setBySize(uint64_t value)
     case RegisterSize::Byte:
         byte = (uint8_t)value;
         break;
-    //nema defaulta
     }
 
 }
-uint64_t Register::getAsFull() const
-{
-    return full;
-}
 
-uint32_t Register::getAsHalf() const
-{
-    return half;
-}
-
-uint16_t Register::getAsQuarter() const
-{
-    return quarter;
-}
-
-uint8_t Register::getAsByte() const
-{
-    return byte;
-}
-
-void Register::setAsFull(uint64_t value)
-{
-    full = value;
-}
-
-void Register::setAsHalf(uint32_t value)
-{
-    half = value;
-}
-
-void Register::setAsQuarter(uint16_t value)
-{
-    quarter = value;
-}
-
-void Register::setAsByte(uint8_t value)
-{
-    byte = value;
-}
 void Register::moveOther(Register&& other)
 {
     if (this != &other) {
@@ -128,6 +91,7 @@ void Register::moveOther(Register&& other)
         size = std::move(other.size);
     }
 }
+
 void Register::copyOther(const Register& other)
 {
     if (this != &other) {
@@ -137,3 +101,20 @@ void Register::copyOther(const Register& other)
     }
 }
 #pragma endregion
+
+int RegisterSizeToBits(RegisterSize rsize)
+{
+    switch (rsize)
+    {
+    case RegisterSize::Full:
+        return 64;
+    case RegisterSize::Half:
+        return 32;
+    case RegisterSize::Quarter:
+        return 16;
+    case RegisterSize::Byte:
+        return 8;
+    default:
+        return 64;//AAAAKO ikad ikako dodje ovjd,e a nece
+    }
+}

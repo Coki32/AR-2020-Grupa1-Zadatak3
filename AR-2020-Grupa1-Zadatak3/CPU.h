@@ -6,12 +6,25 @@
 
 #include "Register.h"
 #include "Instruction.h"
-
 #include <map>
+
+struct CpuOptions {
+	int numberOfRegisters;
+	int heapSize;
+	bool debug;
+	bool avanturista;//srecno
+	CpuOptions(int numberOfRegisters,int heapSize, bool debug, bool avanturista) :
+		numberOfRegisters(numberOfRegisters), heapSize(heapSize),
+		debug(debug), avanturista(avanturista) {}
+	CpuOptions() :CpuOptions(8,1024, false, false) {}
+};
+
 class CPU
 {
-	static const int HEAP_SIZE = 32;
 	int numberOfRegisters;
+	bool debug;
+	bool avanturista;
+
 	std::map<std::string, Register> registers;
 	std::vector<uint8_t> heap;
 	std::stack<uint64_t> stack;
@@ -22,11 +35,8 @@ class CPU
 	std::vector<Instruction> instructions;
 	std::vector<std::string> lines;
 public:
-	CPU(int numberOfRegisters = 8);
+	CPU(CpuOptions options);
 
-	/*
-	* Read the input file and store instructions locally before execution
-	*/
 	bool readFile(const std::string& filePath);
 	bool readFile(std::fstream& file);
 
@@ -41,19 +51,27 @@ public:
 	inline Flags& getFlags() { return flags; }
 	inline const Flags& getFlags() const { return flags; }//zlu ne trebalo
 
+	void jumpToLine(int line);
+	void jumpToLabel(const std::string& label);
+
 	Register& getRegister(const std::string& name);
 
 	void printInstructions();
 
 	void run();
 
+	void showDebugMenu(Instruction& instruction, bool& shouldPause);
 public:
+
+	void memoryDebugMenu();
 	
 	template<typename T>
 	void writeToMemory(int address, T value);
 
 	template<typename T>
 	T readFromMemory(int address);
+
+	uint64_t readFromMemoryByRegisterSize(int address, const Register& reg);
 
 };
 
@@ -63,7 +81,7 @@ inline void CPU::writeToMemory(int address, T value)
 	if (address + sizeof(T) > heap.size() || address < 0)
 		throw new std::out_of_range("Pristup van memorije!");
 	for (int i = 0; i < sizeof(T); ++i)
-		heap[address + i] = (value & (0xFF << i * 8)) >> (i * 8);
+		heap[address + i] = (uint8_t)(value >> (i * 8));
 }
 
 template<typename T>

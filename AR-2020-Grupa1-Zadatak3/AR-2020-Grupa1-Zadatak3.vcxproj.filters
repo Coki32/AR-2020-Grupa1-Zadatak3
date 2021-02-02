@@ -27,15 +27,6 @@
     <ClInclude Include="Instruction.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IReadable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IWritable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IReadWritable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="util.h">
       <Filter>Header Files</Filter>
     </ClInclude>

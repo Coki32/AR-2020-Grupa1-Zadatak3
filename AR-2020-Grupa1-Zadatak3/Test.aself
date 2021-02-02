@@ -1,4 +1,7 @@
-mov; rax; 0; 
-add; rax; 150;
-mov; rbx; 15;
-add; rbx; rax;
+mov; rax; 10;
+*
+mov; [100]; 0xAABBCCDD
+mov; [101]; 0xCCDD
+mov; [rax]; 0x33;
+mov; rbx; [rax];
+$print; rbx;
