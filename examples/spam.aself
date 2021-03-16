@@ -1,0 +1,13 @@
+#ovo spama porukicu n puta
+$print;Upisi broj koliko puta da ponovim neku poruku:;
+$read; rax;
+mov; rbx; 0
+_pocetak
+$print; Ijao, evo ide ;
+$print; rbx;
+$println;. iteracija!;
+sub; rax; 1;
+add; rbx; 1;
+cmp; rax; 0;
+jne; _pocetak;
+$println; Cao, gotovo...

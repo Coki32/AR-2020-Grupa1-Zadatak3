@@ -1,0 +1,21 @@
+#bilo bi previse lako da imamo mul instrukciju, zato
+#ovo je implementacija mul-a
+$print;Unesi prvi broj:;
+$read; rax;
+$print;Unesi drugi broj:;
+$read; rbx;
+$print;Prvi broj je:;
+$println; rax;
+$print;Drugi broj je:;
+$println; rbx;
+mov; rcx; 0;
+_pocetak
+*
+cmp; rax; 0;
+je; _kraj;
+add; rcx; rbx;
+sub; rax; 1;
+jmp; _pocetak
+_kraj
+$print; Proizvod datih brojeva je: ;
+$println; rcx;

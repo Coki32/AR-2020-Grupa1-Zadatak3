@@ -250,13 +250,31 @@ void Instruction::execute()
 			}},
 			{ "print", [this](CPU& c) {
 				if (destType == OperandType::Register)
-					std::cout << c.getRegister(destStringValue).asHex();
+					if (c.isHexOutput())
+						std::cout << c.getRegister(destStringValue).asHex();
+					else
+						std::cout << c.getRegister(destStringValue).getBySize();
+				else if (trimCopy(destStringValue)[0] == '[') {//mozda je registar
+					auto trimmed = trimCopy(destStringValue);//uzasno, znam
+					if (trimmed[trimmed.length() - 1] == ']')
+						if (isRegister(trimmed.substr(1, trimmed.length() - 2), c.getRegisterCount()))
+							std::cout << c.readFromMemory<uint64_t>(c.getRegister(trimmed.substr(1, trimmed.length() - 2)).getBySize());
+					}
 				else
 					std::cout << destStringValue;
 			} },
 			{ "println", [this](CPU& c) {
 				if (destType == OperandType::Register)
-					std::cout << c.getRegister(destStringValue).asHex();
+					if (c.isHexOutput())
+						std::cout << c.getRegister(destStringValue).asHex();
+					else
+						std::cout << c.getRegister(destStringValue).getBySize();
+				else if (trimCopy(destStringValue)[0] == '[') {//mozda je registar
+					auto trimmed = trimCopy(destStringValue);//uzasno, znam
+					if (trimmed[trimmed.length() - 1] == ']')
+						if (isRegister(trimmed.substr(1, trimmed.length() - 2), c.getRegisterCount()))
+							std::cout << c.readFromMemory<uint64_t>(c.getRegister(trimmed.substr(1, trimmed.length() - 2)).getBySize());
+					}
 				else
 					std::cout << destStringValue;
 				std::cout << std::endl;
@@ -269,7 +287,7 @@ void Instruction::execute()
 				uint64_t noviInt = 0;
 				std::string input;
 				std::cin >> input;
-				if (input[1] == 'x' || input[1] == 'X')
+				if (input.length()>2 && (input[1] == 'x' || input[1] == 'X'))
 					noviInt = std::stoull(input.substr(2), nullptr, 16);
 				else
 					noviInt = std::stoull(input);

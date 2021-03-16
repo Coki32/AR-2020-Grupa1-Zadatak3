@@ -34,6 +34,7 @@ void printArgs() {
 	-f filename - jedini obavezni argument. Navodi ime .aself fajla koji se koristi kao ulaz za interpreter.
 	-d | --debug - oznacava da li se program izvrsava u debug modu ili ne. Bez debug-a ignorisu se breakpointi.
 	-a | --avanturista - oznacava da li se pri odabiru debug opcije koristi zabavni unos ili ne.
+	-x | --hex - oznacava da ce output kod print i println instrukcija biti ustvari heksadecimalni broj, default: false
 	-rcount N - specificira broj registara koje "procesor" koristi. Mora biti u opsegu [1,26], default: 8
 	-heap M - specificira velicinu heap-a u bajtovima, default: 1024)" << std::endl;
 }
@@ -53,6 +54,7 @@ ProgramOptions argumenti(int argc, char** argv) {
 	};
 	options.cpuOptions.debug = argumentExists("-d") || argumentExists("--debug");
 	options.cpuOptions.avanturista = argumentExists("-a") || argumentExists("--avanturista");
+	options.cpuOptions.printsHex = argumentExists("-x") || argumentExists("--hex");
 	if (auto rcount = getArgumentIfExists("-rcount"); rcount != end) {
 		try {
 			options.cpuOptions.numberOfRegisters = std::stoi(*rcount);

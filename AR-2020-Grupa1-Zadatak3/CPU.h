@@ -13,10 +13,11 @@ struct CpuOptions {
 	int heapSize;
 	bool debug;
 	bool avanturista;//srecno
-	CpuOptions(int numberOfRegisters,int heapSize, bool debug, bool avanturista) :
+	bool printsHex;
+	CpuOptions(int numberOfRegisters,int heapSize, bool debug, bool avanturista, bool printsHex) :
 		numberOfRegisters(numberOfRegisters), heapSize(heapSize),
-		debug(debug), avanturista(avanturista) {}
-	CpuOptions() :CpuOptions(8,1024, false, false) {}
+		debug(debug), avanturista(avanturista), printsHex(printsHex) {}
+	CpuOptions() :CpuOptions(8,1024, false, false, false) {}
 };
 
 class CPU
@@ -24,7 +25,7 @@ class CPU
 	int numberOfRegisters;
 	bool debug;
 	bool avanturista;
-
+	bool printsHex;
 	std::map<std::string, Register> registers;
 	std::vector<uint8_t> heap;
 	std::stack<uint64_t> stack;
@@ -50,6 +51,9 @@ public:
 
 	inline Flags& getFlags() { return flags; }
 	inline const Flags& getFlags() const { return flags; }//zlu ne trebalo
+
+	inline bool isHexOutput() { return printsHex; }
+	inline const bool isHexOutput() const { return printsHex; }
 
 	void jumpToLine(int line);
 	void jumpToLabel(const std::string& label);

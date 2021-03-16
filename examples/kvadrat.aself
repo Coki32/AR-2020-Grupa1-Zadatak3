@@ -1,0 +1,14 @@
+$println;Upisi broj
+$read; rax
+mov; rbx; 0
+mov; rcx; rax
+_vrh
+add; rbx; rax 
+sub; rcx; 1
+cmp; rcx; 0
+jne; _vrh
+$print; rax
+$print;*  
+$print; rax
+$print;= 
+$print; rbx

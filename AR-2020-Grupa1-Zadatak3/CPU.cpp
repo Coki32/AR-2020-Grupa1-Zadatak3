@@ -14,11 +14,11 @@ static void LogIfDebug(const T& ss)
 #endif
 }
 
-CPU::CPU(CpuOptions options) :debug(options.debug), avanturista(options.avanturista) {
+CPU::CPU(CpuOptions options) :debug(options.debug), avanturista(options.avanturista), printsHex(options.printsHex) {
 	if (options.numberOfRegisters < 1 || options.numberOfRegisters>26)
 		throw std::exception("Number of registers must be an integer in range [1, 26]");
 	this->numberOfRegisters = options.numberOfRegisters;
-	if(avanturista && debug)
+	if (avanturista && debug)
 		LogIfDebug("Ok, avanturista, srecno s debagovanjem");
 	for (int i = 0; i < options.numberOfRegisters; ++i) {
 		auto name = std::string("r").append(1, 'a' + i).append("x");
@@ -48,10 +48,10 @@ bool CPU::readFile(std::fstream& file)
 	int i = 0;
 
 	while (std::getline(file, line)) {
-		if (line[0] == '#')
+		if (line[0] == '#' || line.length()==0)
 			continue;
 		lines.push_back(line);
-		instructions.emplace_back(line,*this,i);
+		instructions.emplace_back(line, *this, i);
 		i++;
 	}
 	return true;
@@ -59,9 +59,8 @@ bool CPU::readFile(std::fstream& file)
 
 void CPU::printState()
 {
-	for (auto it = registers.begin(); it != registers.end(); ++it) {
+	for (auto it = registers.begin(); it != registers.end(); ++it)
 		std::cout << it->second.asHex(false) << std::endl;
-	}
 }
 
 void CPU::jumpToLine(int line)
@@ -73,7 +72,7 @@ void CPU::jumpToLabel(const std::string& label)
 {
 	int labelIndex = 0;
 	auto is = std::find_if(instructions.begin(), instructions.end(), [&label](const Instruction& i) {
-		return label == i.getName(); 
+		return label == i.getName();
 	});
 	LogIfDebug((std::stringstream("Za ") << label << " skacem na idx: " << (is - instructions.begin())).str());
 	if (is != instructions.end())
@@ -84,7 +83,7 @@ void CPU::jumpToLabel(const std::string& label)
 
 Register& CPU::getRegister(const std::string& name)
 {
-	if(name[0]=='r')
+	if (name[0] == 'r')
 		return registers.at(name);
 	else {
 		auto r = std::string("r").append(name.substr(1));
@@ -104,7 +103,7 @@ void CPU::run()
 	bool shouldPause = false;
 	for (currentInstruction = 0; currentInstruction < instructions.size(); ++currentInstruction) {
 		auto& instruction = instructions[currentInstruction];
-		if (!debug)
+		if (!debug && !instruction.isBreakpoint())//da ne proba slucajno da izvrsi breakpoint
 			instruction.execute();
 		else {
 			LogIfDebug(instruction);
@@ -140,7 +139,7 @@ static int avanturistaInput(int upperBound) {
 		std::cout << "Unesi broj [do " << upperBound << "]: ";
 		std::cin >> c;
 	} while (c < 0);
-	return c % (upperBound+1);
+	return c % (upperBound + 1);
 }
 
 void CPU::showDebugMenu(Instruction& instruction, bool& shouldPause)//mrsko mi je da pravim jos 83 metode, ova ce biti milion linija
@@ -148,12 +147,14 @@ void CPU::showDebugMenu(Instruction& instruction, bool& shouldPause)//mrsko mi j
 	int c;
 	do {
 		std::cout << instruction << std::endl;//ispisi i instrukciju da znas o cemu se radi
-		std::cout << R"(		<==========DEBUG==========>
-		Opcije za debagovanje:
-			0 - izvrsi ovu jednu
-			1 - izvrsi sve do sljedeceg breakpoint-a
-			2 - prikazi registre (sve, pa se vrati u ovaj meni)
-			3 - prikazi memoriju (bice podmeni, pa se vrati u ovaj meni))" << std::endl;
+		std::cout <<
+			"<==========DEBUG==========>\n" <<
+			"Instrukcija: " << instruction << std::endl <<
+			"\tOpcije za debagovanje:\n"
+			"\t0 - izvrsi ovu jednu\n"
+			"\t1 - izvrsi sve do sljedeceg breakpoint-a\n"
+			"\t2 - prikazi registre (sve, pa se vrati u ovaj meni)\n"
+			"\t3 - prikazi memoriju (bice podmeni, pa se vrati u ovaj meni)" << std::endl;
 
 		c = avanturista ? avanturistaInput(3) : limitedInput(0, 3);
 		switch (c)
@@ -178,21 +179,22 @@ void CPU::showDebugMenu(Instruction& instruction, bool& shouldPause)//mrsko mi j
 
 void CPU::memoryDebugMenu()
 {
-	std::cout << R"(		<==========MEMORIJA==========>
-		Memoriju mozes pregledati heksadecimalno na dva nacina:
-			0 - povratak nazad
-			1 - jedna adresa (dohvati 8 bajta)
-			2 - opseg adresa (dohvati barem 1 bajt))" << std::endl;
+	std::cout <<
+		"<==========MEMORIJA==========>\n"
+		"\tMemoriju mozes pregledati heksadecimalno na dva nacina:\n"
+		"\t0 - povratak nazad\n"
+		"\t1 - jedna adresa (dohvati 8 bajta)\n"
+		"\t2 - opseg adresa (dohvati barem 1 bajt)" << std::endl;
 	int c = avanturista ? avanturistaInput(2) : limitedInput(0, 2);
 	switch (c)
 	{
 	case 1: {
-		int adresa = limitedInput(0, heap.size()-8);
+		int adresa = limitedInput(0, heap.size() - 8);
 		for (int i = 0; i < 8; ++i)
 			std::cout << toHexString(heap[adresa + i]) << " ";
-		std::cout<<std::endl;
+		std::cout << std::endl;
 	}
-		break;
+		  break;
 	case 2: {
 		int donja = limitedInput(0, heap.size() - 1);
 		int gornja = limitedInput(donja + 1, heap.size());
@@ -202,7 +204,7 @@ void CPU::memoryDebugMenu()
 				std::cout << std::endl;
 		}
 	}
-		break;
+		  break;
 	}
 }
 
